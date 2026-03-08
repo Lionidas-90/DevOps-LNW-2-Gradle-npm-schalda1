@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Axios Demo</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; margin: 0; background: #1e1e2e; color: #cdd6f4; }
+        h1 { background: #313244; margin: 0; padding: 20px 30px; font-size: 1.2rem; color: #89dceb; }
+        .container { padding: 24px; max-width: 800px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button {
+            background: #cba6f7; color: #1e1e2e; border: none; padding: 10px 20px;
+            border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9rem;
+        }
+        button:hover { background: #b4befe; }
+        button:disabled { background: #45475a; color: #6c7086; cursor: not-allowed; }
+        .status { font-size: 0.85rem; color: #a6adc8; margin-bottom: 12px; min-height: 1.2em; }
+        .status.ok { color: #a6e3a1; }
+        .status.err { color: #f38ba8; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+        .card {
+            background: #313244; border-radius: 10px; padding: 16px;
+            border-left: 3px solid #cba6f7;
+        }
+        .card .id { font-size: 0.75rem; color: #6c7086; margin-bottom: 4px; }
+        .card .title { font-weight: bold; color: #cdd6f4; font-size: 0.9rem; margin-bottom: 6px; }
+        .card .body-text { font-size: 0.8rem; color: #a6adc8; }
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #cba6f7;
+            border-top-color: transparent; border-radius: 50%; animation: spin .6s linear infinite; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .response-box {
+            background: #313244; border-radius: 10px; padding: 16px;
+            font-family: monospace; font-size: 0.8rem; white-space: pre-wrap;
+            color: #a6e3a1; max-height: 300px; overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Axios Demo <span style="opacity:.5;font-size:.85em">v1.x</span></h1>
+    <div class="container">
+
+        <div class="controls">
+            <button onclick="loadPosts()">GET Posts</button>
+            <button onclick="loadUsers()">GET Users</button>
+            <button onclick="sendPost()">POST Request</button>
+        </div>
+        <div class="status" id="status">Wähle eine Aktion...</div>
+        <div id="output"></div>
+
+    </div>
+
+    <script src="vendor/axios.min.js"></script>
+    <script>
+        const status = document.getElementById('status');
+        const output = document.getElementById('output');
+
+        function setLoading(msg) {
+            status.className = 'status';
+            status.innerHTML = `<span class="spinner"></span> ${msg}`;
+            output.innerHTML = '';
+            document.querySelectorAll('button').forEach(b => b.disabled = true);
+        }
+        function setOk(msg) {
+            status.className = 'status ok';
+            status.textContent = '✓ ' + msg;
+            document.querySelectorAll('button').forEach(b => b.disabled = false);
+        }
+        function setErr(msg) {
+            status.className = 'status err';
+            status.textContent = '✗ ' + msg;
+            document.querySelectorAll('button').forEach(b => b.disabled = false);
+        }
+
+        async function loadPosts() {
+            setLoading('GET https://jsonplaceholder.typicode.com/posts?_limit=6');
+            try {
+                const res = await axios.get('https://jsonplaceholder.typicode.com/posts', { params: { _limit: 6 } });
+                setOk(`${res.status} ${res.statusText} — ${res.data.length} Posts geladen`);
+                output.innerHTML = '<div class="card-grid">' +
+                    res.data.map(p => `
+                        <div class="card">
+                            <div class="id">Post #${p.id}</div>
+                            <div class="title">${p.title}</div>
+                            <div class="body-text">${p.body.slice(0, 60)}…</div>
+                        </div>`).join('') +
+                '</div>';
+            } catch(e) { setErr(e.message); }
+        }
+
+        async function loadUsers() {
+            setLoading('GET https://jsonplaceholder.typicode.com/users');
+            try {
+                const res = await axios.get('https://jsonplaceholder.typicode.com/users');
+                setOk(`${res.status} ${res.statusText} — ${res.data.length} Users geladen`);
+                output.innerHTML = '<div class="card-grid">' +
+                    res.data.map(u => `
+                        <div class="card" style="border-left-color:#89b4fa">
+                            <div class="id">${u.email}</div>
+                            <div class="title">${u.name}</div>
+                            <div class="body-text">${u.company.name} · ${u.address.city}</div>
+                        </div>`).join('') +
+                '</div>';
+            } catch(e) { setErr(e.message); }
+        }
+
+        async function sendPost() {
+            setLoading('POST https://jsonplaceholder.typicode.com/posts');
+            try {
+                const payload = { title: 'DevOps Test', body: 'Gesendet mit Axios', userId: 1 };
+                const res = await axios.post('https://jsonplaceholder.typicode.com/posts', payload);
+                setOk(`${res.status} ${res.statusText} — Objekt erstellt mit ID ${res.data.id}`);
+                output.innerHTML = `<div class="response-box">${JSON.stringify(res.data, null, 2)}</div>`;
+            } catch(e) { setErr(e.message); }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Day.js Demo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #1e1e2e; color: #cdd6f4; }
+        h1 { background: #313244; margin: 0; padding: 20px 30px; font-size: 1.2rem; color: #89dceb; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; padding: 24px; }
+        .card { background: #313244; border-radius: 10px; padding: 20px; }
+        .card h2 { margin: 0 0 12px; font-size: 0.85rem; text-transform: uppercase; color: #a6adc8; letter-spacing: 1px; }
+        .value { font-size: 1.4rem; font-weight: bold; color: #cba6f7; word-break: break-all; }
+        .value.green { color: #a6e3a1; }
+        .value.yellow { color: #f9e2af; }
+        .value.blue { color: #89b4fa; }
+        .value.red { color: #f38ba8; }
+        #clock { font-size: 2rem; color: #89dceb; }
+    </style>
+</head>
+<body>
+    <h1>Day.js Demo <span style="opacity:.5;font-size:.85em">v1.x</span></h1>
+    <div class="grid">
+        <div class="card">
+            <h2>Live Clock</h2>
+            <div class="value" id="clock">--:--:--</div>
+        </div>
+        <div class="card">
+            <h2>Heute (formatiert)</h2>
+            <div class="value green" id="formatted"></div>
+        </div>
+        <div class="card">
+            <h2>ISO 8601</h2>
+            <div class="value yellow" id="iso"></div>
+        </div>
+        <div class="card">
+            <h2>Unix Timestamp</h2>
+            <div class="value blue" id="unix"></div>
+        </div>
+        <div class="card">
+            <h2>In 7 Tagen</h2>
+            <div class="value" id="future"></div>
+        </div>
+        <div class="card">
+            <h2>Vor 30 Tagen</h2>
+            <div class="value red" id="past"></div>
+        </div>
+        <div class="card">
+            <h2>Tag des Jahres</h2>
+            <div class="value yellow" id="dayofyear"></div>
+        </div>
+        <div class="card">
+            <h2>Wochentag</h2>
+            <div class="value green" id="weekday"></div>
+        </div>
+    </div>
+
+    <script src="vendor/dayjs.min.js"></script>
+    <script>
+        const DAYS = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+        const MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+        function update() {
+            const now = dayjs();
+            document.getElementById('clock').textContent =
+                now.format('HH:mm:ss');
+            document.getElementById('formatted').textContent =
+                now.format('DD. MMMM YYYY').replace(now.format('MMMM'), MONTHS[now.month()]);
+            document.getElementById('iso').textContent =
+                now.toISOString();
+            document.getElementById('unix').textContent =
+                now.unix() + ' s';
+            document.getElementById('future').textContent =
+                now.add(7, 'day').format('DD.MM.YYYY');
+            document.getElementById('past').textContent =
+                now.subtract(30, 'day').format('DD.MM.YYYY');
+            const start = dayjs().startOf('year');
+            document.getElementById('dayofyear').textContent =
+                'Tag ' + (now.diff(start, 'day') + 1) + ' / 365';
+            document.getElementById('weekday').textContent =
+                DAYS[now.day()];
+        }
+
+        update();
+        setInterval(update, 1000);
+    </script>
+</body>
+</html>

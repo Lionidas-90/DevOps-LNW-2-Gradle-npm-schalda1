@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Anime.js Demo</title>
+    <style>
+      body{font-family:Arial;margin:20px}
+      .box{width:50px;height:50px;background:#36a2eb;margin:20px}
+    </style>
+  </head>
+  <body>
+    <h1>Anime.js Demo (3.2.2)</h1>
+    <div class="box" id="box"></div>
+
+    <script src="vendor/anime.min.js"></script>
+    <script>
+      anime({
+        targets: '#box',
+        translateX: 300,
+        rotate: '1turn',
+        backgroundColor: '#ff6384',
+        duration: 2000,
+        loop: true
+      });
+    </script>
+  </body>
+</html>

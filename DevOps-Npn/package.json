@@ -1,0 +1,28 @@
+{
+  "name": "devops-npn",
+  "version": "1.0.0",
+  "description": "LNW 2",
+  "license": "ISC",
+  "author": "schalda1",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "axios": "node examples/axios-example.js",
+    "dayjs": "node examples/dayjs-example.js",
+    "chartjs": "node examples/chartjs-example.js",
+    "animejs": "node examples/animejs-example.js",
+    "examples": "npm run axios && npm run dayjs && npm run chartjs && npm run animejs",
+    "serve": "npx http-server demos -p 8080 -c-1"
+  },
+  "dependencies": {
+    "animejs": "^3.2.2",
+    "axios": "^1.13.6",
+    "chart.js": "^4.5.1",
+    "dayjs": "^1.11.19"
+  },
+  "devDependencies": {
+    "get-port": "^7.1.0",
+    "open": "^11.0.0"
+  }
+}
